@@ -1,30 +1,27 @@
-// utils/wait.js
 async function waitForFixedTime(duration) {
 	return new Promise(resolve => setTimeout(resolve, duration));
 }
 
-module.exports = {
-	waitForFixedTime,
-};
-
 async function eternalWait(page, selector) {
-	while (true) {
-		try {
-			await page.waitForSelector(selector, { timeout: 500 });
-			return await page.$(selector);
-		} catch (error) {
-			console.log(`\n\nWaiting for the element(s) ${selector} to become visible...`);
-			await new Promise(resolve => setTimeout(resolve, 500));
+	try {
+		while ((await page.$(selector)) === null) {
+			console.log(`Waiting for the element(s) ${selector} to become visible...`);
+			await waitForFixedTime(500);
 		}
+		return await page.$(selector);
+	} catch (error) {
+		console.error(`Error waiting for element(s) ${selector}:`, error);
+		throw error;
 	}
 }
 
-// // Custom wait function using puppeteer
+// Uncomment the following code if you need to use customWait
 // async function customWait(page, selector, timeout = 1000) {
-// 	await page.waitForSelector(selector, { timeout });
+//   await page.waitForSelector(selector, { timeout });
 // }
 
 module.exports = {
+	waitForFixedTime,
 	eternalWait,
-	customWait,
+	// customWait, // Uncomment this line if you uncomment the function above
 };

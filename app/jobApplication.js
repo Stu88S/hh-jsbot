@@ -1,3 +1,9 @@
+const JOB_LISTINGS_PAGE_URL = "URL_OF_JOB_LISTINGS_PAGE"; // Replace with the actual URL
+const JOB_LINK_SELECTOR = '[data-qa="vacancy-serp__vacancy-title"]'; // Replace with actual selector
+const POPUP_SELECTOR = "SELECTOR_FOR_POPUP"; // Replace with actual selector for the popup
+const POPUP_BUTTON_SELECTOR = "SELECTOR_FOR_POPUP_BUTTON"; // Replace with the selector for the popup button to close it
+// ... other selectors ...
+
 async function clickAllJobs() {
 	const browser = await puppeteer.launch({ headless: false });
 	const page = await browser.newPage();
@@ -139,13 +145,12 @@ async function checkCoverLetterPopup(page, message) {
 	}
 }
 
-async function inrternationalOk(page) {
+async function internationalOk(page) {
 	try {
-		const international = await page.waitForSelector('[data-qa="relocation-warning-confirm"]', { timeout: 5000 });
-		await page.evaluate(button => button.click(), international);
+		const internationalPopup = await page.waitForSelector('[data-qa="relocation-warning-confirm"]', { timeout: 5000 });
+		await page.evaluate(button => button.click(), internationalPopup);
 	} catch (error) {
-		// exit the function if the element is not found
-		return;
+		console.warn("International popup not found:", error);
 	}
 	await page.reload();
 }
@@ -166,3 +171,11 @@ async function setValueWithEvent(page, selector, value) {
 		value
 	);
 }
+
+module.exports = {
+	clickAllJobs,
+	answerQuestions,
+	checkCoverLetterPopup,
+	internationalOk,
+	setValueWithEvent,
+};
